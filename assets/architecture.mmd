@@ -1,0 +1,14 @@
+flowchart LR
+  UI[Browser UI] -->|POST JSON| ROUTE{{"/api/feedback"}}
+  ROUTE --> ENC[Tensor encode FEN+UCI]
+  ENC --> ONNX[ ONNX coach.onnx ]
+  ONNX --> GATE{Conf OK?}
+  GATE -->|yes| ML[out: ml-onnx prose]
+  GATE -->|no| OAI[Optional OpenAI]
+  OAI --> OUT[out: openai or offline]
+  ML --> CARD[Coach card + grade]
+  OUT --> CARD
+  ROUTE --> ZOD[Zod guardrails]
+
+  ONNX -.benchmark.- EVAL[[evaluate.py]]
+  CARD -.human review.- RESULT[Results summary]

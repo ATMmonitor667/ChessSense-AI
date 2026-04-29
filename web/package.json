@@ -2,11 +2,12 @@
   "name": "web",
   "version": "0.1.0",
   "private": true,
-  "scripts": {
+    "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "validate-puzzles": "node scripts/validate-puzzles.js"
   },
   "dependencies": {
     "chess.js": "^1.4.0",

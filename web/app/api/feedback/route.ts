@@ -31,6 +31,20 @@ function fallbackStaticCopy(): string {
   return "Coach service is offline — compare your move to the best line printed above, replay the arrows slowly, then restate what the defender’s worst weakness was.";
 }
 
+/** Structured logs — no positions or secrets (FEN/OpenAI bodies excluded). */
+function logFeedback(
+  event: string,
+  meta: Record<string, string | number | boolean | string[]> = {},
+): void {
+  try {
+    console.info(
+      JSON.stringify({ svc: "chesssense-feedback", event, ...meta }),
+    );
+  } catch {
+    /* ignore */
+  }
+}
+
 function validationErrorPayload(error: ZodError) {
   const flat = error.flatten();
   const pairs = Object.entries(flat.fieldErrors)
@@ -53,11 +67,16 @@ export async function POST(req: Request) {
   try {
     json = await req.json();
   } catch {
+    logFeedback("invalid_json_body", {});
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
   const parsed = bodySchema.safeParse(json);
   if (!parsed.success) {
+    const flat = parsed.error.flatten();
+    logFeedback("validation_failed", {
+      fields: Object.keys(flat.fieldErrors),
+    });
     const body = validationErrorPayload(parsed.error);
     return NextResponse.json(body, { status: 400 });
   }
@@ -74,6 +93,12 @@ export async function POST(req: Request) {
   const ml = await tryMlCoach(feats, threshold);
 
   if (ml.ok) {
+    logFeedback("coach_path", {
+      path: "ml-onnx",
+      confidence: ml.confidence,
+      grade: ml.grade,
+      style: data.style,
+    });
     const feedback = buildMlCoachParagraph({
       style: data.style,
       gradeGuess: ml.grade,
@@ -92,6 +117,12 @@ export async function POST(req: Request) {
   }
 
   /** Fall back to OpenAI when ONNX missing, inference failed, or low confidence. */
+  logFeedback("coach_path", {
+    path: "openai_fallback",
+    ml_ok: ml.ok === false ? 1 : 0,
+    ml_reason: ml.ok === false ? ml.reason : "n/a",
+    style: data.style,
+  });
 
   const userPrompt = buildCoachPrompt({
     fen: data.fen,
@@ -110,6 +141,7 @@ export async function POST(req: Request) {
     "gpt-4o-mini";
 
   if (!apiKey) {
+    logFeedback("coach_path", { path: "offline_no_api_key", style: data.style });
     return NextResponse.json({
       feedback: fallbackStaticCopy(),
       source: "offline",
@@ -134,6 +166,11 @@ export async function POST(req: Request) {
 
     if (!res.ok) {
       const errText = await res.text().catch(() => res.statusText);
+      logFeedback("openai_http_error", {
+        status: res.status,
+        style: data.style,
+        errHead: errText.slice(0, 120),
+      });
       return NextResponse.json(
         {
           feedback: fallbackStaticCopy(),
@@ -153,6 +190,7 @@ export async function POST(req: Request) {
       completion.choices?.[0]?.message?.content?.trim() ?? "";
 
     if (!text) {
+      logFeedback("coach_path", { path: "offline-empty-completion", style: data.style });
       return NextResponse.json(
         {
           feedback: fallbackStaticCopy(),
@@ -163,12 +201,14 @@ export async function POST(req: Request) {
       );
     }
 
+    logFeedback("coach_path", { path: "openai", style: data.style });
     return NextResponse.json({
       feedback: text,
       source: "openai",
       mlAttempt: ml,
     });
   } catch {
+    logFeedback("coach_path", { path: "offline-network", style: data.style });
     return NextResponse.json(
       {
         feedback: fallbackStaticCopy(),

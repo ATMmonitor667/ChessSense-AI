@@ -29,6 +29,17 @@ Outputs:
 | `web/artifacts/coach.pt` | PyTorch `state_dict` |
 | `web/artifacts/coach.onnx` | Production inference |
 
+## Evaluate (reliability / coursework)
+
+After `train.py` produces `coach.pt`, measure agreement between the saved head and heuristic labels (same augmented rows as training):
+
+```bash
+cd src
+python evaluate.py
+```
+
+Prints overall accuracy, per-class recall, and mean softmax confidence—quote the numbers in your **Testing summary** / report.
+
 **Encoder parity** must remain identical between:
 
 - `ml/src/encoding.py`

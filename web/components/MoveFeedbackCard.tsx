@@ -50,7 +50,6 @@ export default function MoveFeedbackCard({
         className="mt-4 border-t border-zinc-200 pt-4 dark:border-zinc-800"
         role="region"
         aria-label="Coach feedback"
-        aria-busy={feedbackPending ? "true" : "false"}
       >
         <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-zinc-500">
           Coach
