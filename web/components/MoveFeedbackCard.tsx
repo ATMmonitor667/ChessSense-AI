@@ -23,6 +23,9 @@ export default function MoveFeedbackCard({
   feedbackError,
   onRetryFeedback,
 }: Props) {
+  const coachEmpty =
+    !feedbackPending && !feedbackError && !feedback?.trim?.();
+
   return (
     <div className="mt-6 w-full rounded-xl border border-zinc-200 bg-zinc-50 p-5 text-zinc-900 shadow-sm dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-100">
       <div className="flex flex-wrap items-baseline gap-3">
@@ -43,12 +46,20 @@ export default function MoveFeedbackCard({
           Continuation: {bestLine.join(" ")}
         </p>
       )}
-      <div className="mt-4 border-t border-zinc-200 pt-4 dark:border-zinc-800">
+      <div
+        className="mt-4 border-t border-zinc-200 pt-4 dark:border-zinc-800"
+        role="region"
+        aria-label="Coach feedback"
+        aria-busy={feedbackPending ? "true" : "false"}
+      >
         <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-zinc-500">
           Coach
         </p>
         {feedbackPending && (
-          <p className="animate-pulse text-sm text-zinc-500">
+          <p
+            role="status"
+            className="animate-pulse text-sm text-zinc-500"
+          >
             Thinking up feedback…
           </p>
         )}
@@ -66,9 +77,20 @@ export default function MoveFeedbackCard({
             </button>
           </div>
         )}
-        {!feedbackPending && !feedbackError && feedback && (
-          <p className="text-sm leading-relaxed">{feedback}</p>
-        )}
+        {!feedbackPending && !feedbackError && Boolean(feedback?.trim?.()) ? (
+          <p
+            className="text-sm leading-relaxed"
+            aria-live="polite"
+          >
+            {feedback}
+          </p>
+        ) : null}
+        {coachEmpty ? (
+          <p className="text-sm text-zinc-500" aria-live="polite">
+            No coach text was returned. Use the grading and lines above — or retry
+            if you expected a fuller note.
+          </p>
+        ) : null}
       </div>
     </div>
   );

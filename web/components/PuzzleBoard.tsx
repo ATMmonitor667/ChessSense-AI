@@ -2,7 +2,7 @@
 
 import { Chessboard } from "react-chessboard";
 import { Chess, type Square } from "chess.js";
-import { useCallback, useMemo, useRef, useEffect, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 
 import { moveToUci } from "@/lib/chess/move";
 
@@ -34,7 +34,15 @@ export type PuzzleBoardProps = {
   onMovePlayed: (san: string, uci: string) => void;
 };
 
-export default function PuzzleBoard({
+/**
+ * Outer wrapper remounts when `fen` changes so piece state/game ref stay aligned
+ * without syncing `useState` in an effect.
+ */
+export default function PuzzleBoard(props: PuzzleBoardProps) {
+  return <PuzzleBoardInner key={props.fen} {...props} />;
+}
+
+function PuzzleBoardInner({
   fen,
   orientation,
   interactive,
@@ -42,12 +50,8 @@ export default function PuzzleBoard({
   onMovePlayed,
 }: PuzzleBoardProps) {
   const gameRef = useRef<Chess>(new Chess(fen));
-  /** Controlled board FEN synced with dragged moves. Keyed remount resets from `fen`. */
+  /** Position after dragged moves — initial `fen` comes from keyed remount. */
   const [fenState, setFenState] = useState(fen);
-
-  useEffect(() => {
-    gameRef.current = new Chess(fen);
-  }, [fen]);
 
   const squareStyles = useMemo(() => {
     const styles: Record<string, React.CSSProperties> = {};

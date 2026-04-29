@@ -15,23 +15,11 @@ import { v4 as uuid } from "uuid";
 import PuzzleBoard from "@/components/PuzzleBoard";
 import MoveFeedbackCard from "@/components/MoveFeedbackCard";
 import { gradeMove } from "@/lib/chess/grade";
+import { LAST_SESSION_STORAGE_KEY } from "@/lib/lastSessionKey";
+import { parseCoachStyle } from "@/lib/puzzles/coachStyles";
 import { buildSessionQueue } from "@/lib/puzzles/index";
 import type { Attempt } from "@/types/attempt";
-import type { Puzzle, Style } from "@/types/puzzle";
-
-const STYLE_OPTIONS: Style[] = [
-  "tactical",
-  "aggressive",
-  "defensive",
-  "positional",
-  "endgame",
-  "engine",
-];
-
-function parseStyle(raw: string | null): Style {
-  if (raw && (STYLE_OPTIONS as string[]).includes(raw)) return raw as Style;
-  return "tactical";
-}
+import type { Puzzle } from "@/types/puzzle";
 
 function parseLen(raw: string | null): number {
   const n = Number(raw);
@@ -44,13 +32,11 @@ function highlightFromUci(uci: string) {
   return { from: u.slice(0, 2), to: u.slice(2, 4) };
 }
 
-const STORAGE_KEY = "chesssense-last-session";
-
 export default function SessionTrainer() {
   const router = useRouter();
   const search = useSearchParams();
   const style = useMemo(
-    () => parseStyle(search.get("style")),
+    () => parseCoachStyle(search.get("style")),
     [search],
   );
   const length = useMemo(
@@ -102,15 +88,17 @@ export default function SessionTrainer() {
     setUserUci(uci);
   }, [submitted]);
 
-  const highlights =
-    submitted && puzzle && gradeResult && userUci
-      ? {
-          userFrom: highlightFromUci(userUci).from,
-          userTo: highlightFromUci(userUci).to,
-          bestFrom: highlightFromUci(puzzle.bestMoveUci).from,
-          bestTo: highlightFromUci(puzzle.bestMoveUci).to,
-        }
-      : undefined;
+  const highlights = useMemo(() => {
+    if (!submitted || !puzzle || !gradeResult || !userUci) return undefined;
+    const user = highlightFromUci(userUci);
+    const best = highlightFromUci(puzzle.bestMoveUci);
+    return {
+      userFrom: user.from,
+      userTo: user.to,
+      bestFrom: best.from,
+      bestTo: best.to,
+    };
+  }, [submitted, puzzle, gradeResult, userUci]);
 
   const requestFeedback = async (
     p: Puzzle,
@@ -133,19 +121,28 @@ export default function SessionTrainer() {
           score,
         }),
       });
-      const data = (await res.json()) as {
+
+      let data: {
         feedback?: string;
-        error?: string;
+        error?: string | unknown;
       };
-      if (!res.ok) {
+
+      try {
+        data = (await res.json()) as typeof data;
+      } catch {
         return {
           ok: false,
           text: "",
-          err:
-            typeof data.error === "string"
-              ? data.error
-              : "Feedback request failed.",
+          err: `Feedback response was not readable (HTTP ${res.status}).`,
         };
+      }
+
+      if (!res.ok) {
+        const msg =
+          typeof data.error === "string"
+            ? data.error
+            : "Feedback request failed.";
+        return { ok: false, text: "", err: msg };
       }
       return {
         ok: true,
@@ -247,7 +244,7 @@ export default function SessionTrainer() {
       attempts: attemptsRef.current,
     };
     try {
-      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+      sessionStorage.setItem(LAST_SESSION_STORAGE_KEY, JSON.stringify(payload));
     } catch {
       /* ignore */
     }
@@ -284,7 +281,11 @@ export default function SessionTrainer() {
     <div className="mx-auto max-w-xl px-4 py-10">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-2 text-sm text-zinc-500">
         <span className="capitalize">{style}</span>
-        <span>{progress}</span>
+        <span aria-label={`Puzzle ${idx + 1} of ${queue.length}`}>
+          Puzzle <span className="font-medium text-zinc-700 dark:text-zinc-300">{puzzle.id}</span>
+          {" · "}
+          {progress}
+        </span>
       </div>
 
       <article className="space-y-4">

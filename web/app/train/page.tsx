@@ -1,19 +1,6 @@
 import Link from "next/link";
 
-import type { Style } from "@/types/puzzle";
-
-const STYLES: { id: Style; label: string; hint: string }[] = [
-  { id: "tactical", label: "Tactical", hint: "Combos & tactics" },
-  { id: "aggressive", label: "Aggressive", hint: "Forcing attacks" },
-  { id: "defensive", label: "Defensive", hint: "Holding resources" },
-  {
-    id: "positional",
-    label: "Positional",
-    hint: "Structure & patience",
-  },
-  { id: "endgame", label: "Endgame", hint: "Technique mode" },
-  { id: "engine", label: "Engine", hint: "Objectively best moves" },
-];
+import { COACH_STYLE_OPTIONS } from "@/lib/puzzles/coachStyles";
 
 export default function TrainPage() {
   return (
@@ -36,7 +23,7 @@ export default function TrainPage() {
             Style
           </legend>
           <div className="mt-3 grid gap-2 sm:grid-cols-2">
-            {STYLES.map((s) => (
+            {COACH_STYLE_OPTIONS.map((s) => (
               <label
                 key={s.id}
                 className="flex cursor-pointer items-start gap-3 rounded-lg border border-zinc-200 bg-white p-3 has-[:checked]:border-blue-500 has-[:checked]:ring-2 has-[:checked]:ring-blue-500/30 dark:border-zinc-800 dark:bg-zinc-950 dark:has-[:checked]:border-blue-400"

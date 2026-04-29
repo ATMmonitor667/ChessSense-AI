@@ -3,7 +3,7 @@ import Link from "next/link";
 export default function Home() {
   return (
     <div className="flex flex-1 flex-col">
-      <main className="mx-auto flex max-w-3xl flex-col gap-12 px-6 py-20 sm:py-28">
+      <div className="mx-auto flex max-w-3xl flex-col gap-12 px-6 py-20 sm:py-28">
         <div>
           <p className="text-sm font-medium uppercase tracking-wide text-blue-600 dark:text-blue-400">
             ChessSense AI
@@ -74,7 +74,7 @@ export default function Home() {
             </p>
           </li>
         </ul>
-      </main>
+      </div>
     </div>
   );
 }

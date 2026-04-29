@@ -6,7 +6,12 @@ export default function SessionPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-[40vh] items-center justify-center text-zinc-500">
+        <div
+          className="flex min-h-[40vh] items-center justify-center text-zinc-500"
+          role="status"
+          aria-busy="true"
+          aria-live="polite"
+        >
           Loading session…
         </div>
       }

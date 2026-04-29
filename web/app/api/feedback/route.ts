@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { z } from "zod";
+import { type ZodError, z } from "zod";
 
 import { buildCoachPrompt } from "@/lib/ai/prompt";
 import { buildMlCoachParagraph } from "@/lib/ml/coachMl";
@@ -31,6 +31,23 @@ function fallbackStaticCopy(): string {
   return "Coach service is offline — compare your move to the best line printed above, replay the arrows slowly, then restate what the defender’s worst weakness was.";
 }
 
+function validationErrorPayload(error: ZodError) {
+  const flat = error.flatten();
+  const pairs = Object.entries(flat.fieldErrors)
+    .filter(([, errs]) => Array.isArray(errs) && errs.length)
+    .map(([key, errs]) => `${key}: ${(errs as string[]).join("; ")}`);
+  const summary =
+    pairs.length > 0
+      ? pairs.join(" · ")
+      : flat.formErrors.length > 0
+        ? flat.formErrors.join(" · ")
+        : "Invalid request body";
+  return {
+    error: summary,
+    fieldErrors: flat.fieldErrors,
+  };
+}
+
 export async function POST(req: Request) {
   let json: unknown;
   try {
@@ -41,10 +58,8 @@ export async function POST(req: Request) {
 
   const parsed = bodySchema.safeParse(json);
   if (!parsed.success) {
-    return NextResponse.json(
-      { error: parsed.error.flatten().fieldErrors },
-      { status: 400 },
-    );
+    const body = validationErrorPayload(parsed.error);
+    return NextResponse.json(body, { status: 400 });
   }
 
   const data = parsed.data;
