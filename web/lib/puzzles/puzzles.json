@@ -27,20 +27,20 @@
     "sideToMove": "white",
     "style": "tactical",
     "prompt": "Exploit a loose piece or back-rank motif.",
-    "bestMove": "Rxe8",
+    "bestMove": "Re8",
     "bestMoveUci": "e1e8",
-    "bestLine": ["Rxe8", "Rxe8"],
+    "bestLine": ["Re8+", "Rf8"],
     "difficulty": 2
   },
   {
     "id": "eng-002",
-    "fen": "4k3/r7/8/8/8/8/8/4K2R w K - 0 1",
+    "fen": "7k/R7/R7/8/8/8/8/K7 w - - 0 1",
     "sideToMove": "white",
     "style": "engine",
     "prompt": "Choose the objectively strongest continuation.",
-    "bestMove": "Ra8",
-    "bestMoveUci": "h1a8",
-    "bestLine": ["Ra8", "Ke7"],
+    "bestMove": "Ra8+",
+    "bestMoveUci": "a7a8",
+    "bestLine": ["Ra8+", "Rg8"],
     "difficulty": 2
   },
   {
@@ -68,13 +68,13 @@
   },
   {
     "id": "agg-001",
-    "fen": "rnbqkb1r/pppp1ppp/8/4Nn2/8/8/PPPPPPPP/RNBQKB1R w KQkq - 0 1",
+    "fen": "rn3k2/pp2qppp/2p2b2/8/3PP3/2N2P2/PP4PP/R1BQKB1R w KQ - 0 1",
     "sideToMove": "white",
     "style": "aggressive",
-    "prompt": "Strike first—prefer the forcing, attacking continuation.",
-    "bestMove": "Qh5+",
-    "bestMoveUci": "d1h5",
-    "bestLine": ["Qh5+", "g6", "Nc6+"],
+    "prompt": "Strike the center immediately—prefer a forcing move.",
+    "bestMove": "Nd5",
+    "bestMoveUci": "c3d5",
+    "bestLine": ["Nd5", "exd5"],
     "difficulty": 3
   },
   {
@@ -87,17 +87,6 @@
     "bestMoveUci": "e6e5",
     "bestLine": ["e5"],
     "difficulty": 2
-  },
-  {
-    "id": "end-002",
-    "fen": "8/8/8/8/5k2/8/5P2/K7 b - - 0 1",
-    "sideToMove": "black",
-    "style": "endgame",
-    "prompt": "Black to win with correct king play.",
-    "bestMove": "Ke3",
-    "bestMoveUci": "f4e3",
-    "bestLine": ["Ke3", "Kd2"],
-    "difficulty": 3
   },
   {
     "id": "pos-002",

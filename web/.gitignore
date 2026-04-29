@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Local ML ONNX / PyTorch checkpoints (produce via ml/src/train.py + export_onnx.py)
+/artifacts/
+
