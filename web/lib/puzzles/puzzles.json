@@ -1,0 +1,135 @@
+[
+  {
+    "id": "tac-001",
+    "fen": "7k/5Q2/6K1/8/8/8/8/8 w - - 0 1",
+    "sideToMove": "white",
+    "style": "tactical",
+    "prompt": "Find the fastest decision—there is mate on the board.",
+    "bestMove": "Qg7#",
+    "bestMoveUci": "f7g7",
+    "bestLine": ["Qg7#"],
+    "difficulty": 2
+  },
+  {
+    "id": "end-001",
+    "fen": "8/P7/8/8/k7/8/8/K7 w - - 0 1",
+    "sideToMove": "white",
+    "style": "endgame",
+    "prompt": "Convert material into a decisive result.",
+    "bestMove": "a8=Q+",
+    "bestMoveUci": "a7a8q",
+    "bestLine": ["a8=Q+"],
+    "difficulty": 1
+  },
+  {
+    "id": "tac-002",
+    "fen": "5rk1/r4ppp/8/8/8/8/5PPP/R3R1K1 w - - 0 1",
+    "sideToMove": "white",
+    "style": "tactical",
+    "prompt": "Exploit a loose piece or back-rank motif.",
+    "bestMove": "Rxe8",
+    "bestMoveUci": "e1e8",
+    "bestLine": ["Rxe8", "Rxe8"],
+    "difficulty": 2
+  },
+  {
+    "id": "eng-002",
+    "fen": "4k3/r7/8/8/8/8/8/4K2R w K - 0 1",
+    "sideToMove": "white",
+    "style": "engine",
+    "prompt": "Choose the objectively strongest continuation.",
+    "bestMove": "Ra8",
+    "bestMoveUci": "h1a8",
+    "bestLine": ["Ra8", "Ke7"],
+    "difficulty": 2
+  },
+  {
+    "id": "pos-001",
+    "fen": "rnbqkbnr/ppp1pppp/8/3p4/8/8/PPPPPPPP/RNBQKBNR w KQkq d6 0 1",
+    "sideToMove": "white",
+    "style": "positional",
+    "prompt": "Play a restrained central move—no flashy tactics.",
+    "bestMove": "d4",
+    "bestMoveUci": "d2d4",
+    "bestLine": ["d4"],
+    "difficulty": 2,
+    "alsoGoodMovesUci": ["g2g3"]
+  },
+  {
+    "id": "def-001",
+    "fen": "8/8/8/k7/8/4P3/8/4K3 w - - 0 1",
+    "sideToMove": "white",
+    "style": "defensive",
+    "prompt": "Keep the equilibrium—do not worsen your position.",
+    "bestMove": "e4",
+    "bestMoveUci": "e3e4",
+    "bestLine": ["e4"],
+    "difficulty": 1
+  },
+  {
+    "id": "agg-001",
+    "fen": "rnbqkb1r/pppp1ppp/8/4Nn2/8/8/PPPPPPPP/RNBQKB1R w KQkq - 0 1",
+    "sideToMove": "white",
+    "style": "aggressive",
+    "prompt": "Strike first—prefer the forcing, attacking continuation.",
+    "bestMove": "Qh5+",
+    "bestMoveUci": "d1h5",
+    "bestLine": ["Qh5+", "g6", "Nc6+"],
+    "difficulty": 3
+  },
+  {
+    "id": "tac-003",
+    "fen": "r1bqkb1r/ppppnppp/4p3/n7/8/6P1/PPPP1P1P/RNBQKB1R b Kkq - 0 1",
+    "sideToMove": "black",
+    "style": "tactical",
+    "prompt": "Black to move — find concrete gains.",
+    "bestMove": "e5",
+    "bestMoveUci": "e6e5",
+    "bestLine": ["e5"],
+    "difficulty": 2
+  },
+  {
+    "id": "end-002",
+    "fen": "8/8/8/8/5k2/8/5P2/K7 b - - 0 1",
+    "sideToMove": "black",
+    "style": "endgame",
+    "prompt": "Black to win with correct king play.",
+    "bestMove": "Ke3",
+    "bestMoveUci": "f4e3",
+    "bestLine": ["Ke3", "Kd2"],
+    "difficulty": 3
+  },
+  {
+    "id": "pos-002",
+    "fen": "rnbqkbnr/ppppp1pp/8/5p2/8/8/PPPPPPPP/RNBQKBNR w KQkq f6 0 1",
+    "sideToMove": "white",
+    "style": "positional",
+    "prompt": "Maintain central tension with a harmonious piece development.",
+    "bestMove": "Nf3",
+    "bestMoveUci": "g1f3",
+    "bestLine": ["Nf3"],
+    "difficulty": 2
+  },
+  {
+    "id": "def-002",
+    "fen": "8/8/8/k7/8/4P3/8/7K b - - 0 1",
+    "sideToMove": "black",
+    "style": "defensive",
+    "prompt": "Improve without giving White free progress.",
+    "bestMove": "Ka4",
+    "bestMoveUci": "a5a4",
+    "bestLine": ["Ka4"],
+    "difficulty": 1
+  },
+  {
+    "id": "eng-003",
+    "fen": "4k3/8/4K3/8/8/8/8/8 w - - 0 1",
+    "sideToMove": "white",
+    "style": "engine",
+    "prompt": "Simplest decisive move in a king-only middlegame.",
+    "bestMove": "Kd5",
+    "bestMoveUci": "e6d5",
+    "bestLine": ["Kd5"],
+    "difficulty": 1
+  }
+]
