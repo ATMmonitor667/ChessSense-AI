@@ -1,0 +1,305 @@
+================================================================================
+CHESSSENSE AI — APPLIED AI SYSTEM
+Presentation outline (.txt → use as blueprint for slides)
+Suggested length: 5–7 minutes (≈12–14 slides total)
+Replace [YOUR NAME] / [DATE] / URLs where noted.
+================================================================================
+
+
+--------------------------------------------------------------------------------
+SLIDE 1 — TITLE
+--------------------------------------------------------------------------------
+TITLE:
+    ChessSense AI — Applied AI System
+
+SUBTITLE (optional):
+    Style-based chess training with ONNX coach + LLM fallback
+
+BYLINE:
+    [YOUR NAME]
+    [COURSE NAME / SECTION]
+
+FOOTER OR SMALL TEXT:
+    [DATE] • [GITHUB REPO URL OR SHORT LINK]
+
+[IMAGE PLACEHOLDER — optional hero]
+    Full-width screenshot: landing page (/), logo area + hero text
+    Filename suggestion: slides/01-hero.png
+
+
+--------------------------------------------------------------------------------
+SLIDE 2 — THE PROBLEM
+--------------------------------------------------------------------------------
+TITLE:
+    What problem does this solve?
+
+KEY POINTS (bullets for speaker notes / slide body):
+    • Chess learners need practice that matches how they think (tactical,
+      defensive, endgames…), not only raw engine evaluations.
+    • Quick, readable feedback beats a stream of numbers.
+    • A system should be explainable — show grade, ideas, not a black box.
+
+[IMAGE PLACEHOLDER — optional]
+    Simple stock chess image OR empty — keep text-heavy if short on time
+    Filename: slides/02-problem-stock.png
+
+
+--------------------------------------------------------------------------------
+SLIDE 3 — ORIGIN PROJECT (MODULES BASELINE)
+--------------------------------------------------------------------------------
+TITLE:
+    Starting point — earlier ChessSense MVP
+
+CONTENT:
+    • Guess-the-move from curated puzzles (JSON), style filters (tactical,
+      aggressive, defensive…).
+    • Heuristic grading vs authored best lines.
+    • Goal then: playable loop + session summary.
+
+[IMAGE PLACEHOLDER]
+    OLD vs NEW split (optional composite), OR screenshot of puzzle list /
+    PROJECT_PLAN.md excerpt
+    Caption under image: "Extended from MVP → full AI-integrated workflow"
+    Filename: slides/03-origin-mvp.png
+
+
+--------------------------------------------------------------------------------
+SLIDE 4 — WHAT WE BUILT NOW (HIGH-LEVEL “SO WHAT?”)
+--------------------------------------------------------------------------------
+TITLE:
+    What this Applied AI submission adds
+
+CONTENT:
+    • Small neural coach (5 grade classes), trained offline, exported to ONNX,
+      runs inside the Next.js API.
+    • Confidence gate: high confidence → ONNX narrative; otherwise OpenAI prose
+      or deterministic offline fallback.
+    • Structured validation (Zod), logging, repeatable evaluation script.
+
+VISUAL CUE ON SLIDE:
+    Three icons or arrows: Train → ONNX? → Fallback chain
+
+[IMAGE PLACEHOLDER — conceptual]
+    Crop of assets/architecture.mmd exported as PNG (full diagram fits next slide)
+    OR simple 3-step diagram you drew
+    Filename: slides/04-pipeline-mini.png
+
+
+--------------------------------------------------------------------------------
+SLIDE 5 — ARCHITECTURE (SYSTEM DIAGRAM)
+--------------------------------------------------------------------------------
+TITLE:
+    End-to-end architecture
+
+CONTENT:
+    Brief talk track (don’t read all labels):
+      Browser → POST /api/feedback → encode FEN/UCI tensor → ONNX GradeHead →
+      softmax threshold → narrative OR OpenAI → user sees coach paragraph.
+
+CONTENT (optional small bullets — if diagram is dense, keep bullets minimal):
+    • ONNX: fast, deterministic path on CPU.
+    • Fallbacks preserve the experience without silent failure.
+
+[IMAGE PLACEHOLDER — REQUIRED]
+    Full system diagram (from Mermaid Live or assets/architecture.mmd exported)
+    Readable at slide resolution (no tiny text).
+    Filename: slides/05-architecture-full.png
+
+
+--------------------------------------------------------------------------------
+SLIDE 6 — THE MODEL (UNDER THE HOOD)
+--------------------------------------------------------------------------------
+TITLE:
+    Specialized model — not “chat” as the brain
+
+CONTENT:
+    • Input: fixed-size encoding (piece planes + globals + move one-hot —
+      aligns Python training + TypeScript inference).
+    • Output: 5 logits → softmax → grade bucket + peak confidence.
+    • Trained labels mirror the same heuristic rules as the web grade (explicit
+      trade-off documented).
+
+SPEAKER HOOK ONE-LINER:
+    "We're not claiming perfect chess wisdom — we're learning consistent
+     labels that match our product logic."
+
+[IMAGE PLACEHOLDER]
+    EITHER: Tiny diagram (inputs → GradeHead → 5 grades)
+          OR snippet of ml/src/model.py (GradeHead Sequential) blurred background
+          OR onnx export filenames (coach.pt / coach.onnx) in Finder/explorer
+    Filename: slides/06-model-layer.png
+
+
+--------------------------------------------------------------------------------
+SLIDE 7 — CONFIDENCE & FALLBACK LOGIC (TRUSTWORTHINESS HOOK)
+--------------------------------------------------------------------------------
+TITLE:
+    Why outputs stay grounded
+
+CONTENT:
+    • Softmax peak below threshold ⇒ don’t blindly trust ONNX label prose.
+    • OpenAI only when ONNX isn’t credible or missing artefact → API key optional.
+    • Deterministic fallback text if APIs fail — user always gets structured UI.
+
+VISUAL IDEA:
+    Number line or bar: Confidence vs threshold → branch left / branch right.
+
+[IMAGE PLACEHOLDER — optional tech evidence]
+    Screenshot DevTools Network: JSON with "source": "ml-onnx", mlConfidence
+    Filename: slides/07-network-ml-onnx.png
+
+
+--------------------------------------------------------------------------------
+SLIDE 8 — GUARDRAILS & OBSERVABILITY
+--------------------------------------------------------------------------------
+TITLE:
+    Guardrails and logging
+
+CONTENT:
+    • Zod-validated request bodies → readable error messages client-side.
+    • Structured server logs — events + style + outcome path (NOT full FEN in logs
+      → privacy/size).
+    • Puzzle JSON validator (`npm run validate-puzzles`) before ship.
+
+SPEAKER EMPHASIS ONE-LINER:
+    "Responsible design isn’t only the model — it’s validation + what we log."
+
+[IMAGE PLACEHOLDER]
+    EITHER: Tiny terminal screenshot validate-puzzles PASSED
+          OR blurred log lines showing JSON svc: chesssense-feedback
+    Filename: slides/08-logs-validator.png
+
+
+--------------------------------------------------------------------------------
+SLIDE 9 — DEMO: USER FLOW (PRIMARY VISUAL SECTION)
+--------------------------------------------------------------------------------
+TITLE:
+    Live experience — screenshots from the actual app
+
+PANEL — suggest 4 sub-slots (one row or 2×2 grid on slide):
+
+[IMAGE PLACEHOLDER A — REQUIRED]
+    /train — style selection radio grid + session length
+    Filename: slides/09a-train-page.png
+
+[IMAGE PLACEHOLDER B — REQUIRED]
+    /session — puzzle prompt + chessboard BEFORE submit (interactive)
+    Filename: slides/09b-session-board.png
+
+[IMAGE PLACEHOLDER C — REQUIRED]
+    Same session AFTER submit — grade + Coach card (shows feedback text area)
+    Filename: slides/09c-session-feedback.png
+
+[IMAGE PLACEHOLDER D — OPTIONAL]
+    /results — session summary / stats overview
+    Filename: slides/09d-results-summary.png
+
+CAPTION AREA (tiny text below grid):
+    "Same session: choose style → move → graded → coached → summarized"
+
+
+--------------------------------------------------------------------------------
+SLIDE 10 — EVALUATION & WHAT WE MEASURED
+--------------------------------------------------------------------------------
+TITLE:
+    Reliability / evaluation (not vibes)
+
+CONTENT:
+    • `python evaluate.py` — agreement vs heuristic labels on augmented rows +
+      per-class recall + mean softmax confidence — quote ONE line summary on slide.
+    • Build hygiene: npm run build, lint green.
+    • Human spot-check: skim coach text vs visible SAN line.
+
+FILL AFTER YOU RUN SCRIPT (replace brackets):
+    • Agreement: [e.g. 230/233 — YOUR RUN]
+    • Mean confidence: [e.g. 0.98 — YOUR RUN]
+
+[IMAGE PLACEHOLDER]
+    Terminal capture: python evaluate.py output (readable font size!)
+    Filename: slides/10-evaluate-terminal.png
+
+
+--------------------------------------------------------------------------------
+SLIDE 11 — ETHICS / LIMITATIONS (REQUIRED RESPONSIBILITY SLIDE)
+--------------------------------------------------------------------------------
+TITLE:
+    Limitations — honest boundaries
+
+CONTENT:
+    • Oracle labels ≈ heuristic game rules → not definitive engine perfection.
+    • Small curated puzzle corpus — generalisation beyond similar patterns limited.
+    • OpenAI prose (when enabled) can still drift vs position — ONNX path prefers
+      consistency; confidence gate mitigates over-trust.
+
+ONE BULLET — MISUSE:
+    • Don’t advertise as unbeatable analysis — pedagogical drill, not GMs’ second.
+
+[IMAGE PLACEHOLDER — optional]
+    None OR simple warning triangle icon graphic
+    Filename: slides/11-ethics-placeholder.png
+
+
+--------------------------------------------------------------------------------
+SLIDE 12 — REFLECTION (“WHAT DID I LEARN?”)
+--------------------------------------------------------------------------------
+TITLE:
+    What this project reinforced for me
+
+CONTENT (adapt to YOUR story — placeholders):
+    • Parity bugs (Python vs TS tensors) bite — testing across boundary matters.
+    • Small head + thresholds + fallback chain > one giant brittle prompt.
+    • AI-assisted dev helps fast — verification still belongs to humans
+      (mention one IDE AI win + one hallucination YOU experienced).
+
+SHORT QUOTE AREA (pick one sentiment):
+    • "Responsible AI = observable paths + thresholds + refusal to silently fail."
+
+[IMAGE PLACEHOLDER — optional fun]
+    You at keyboard / whiteboard scribble stylized chess piece doodle — personal
+    Filename: slides/12-you-op.jpg
+
+
+--------------------------------------------------------------------------------
+SLIDE 13 — LIVE DEMO PLAN (WHAT YOU CLICK IN VIDEO / CLASS)
+--------------------------------------------------------------------------------
+TITLE:
+    Live demo roadmap (≤ 90 seconds on stage)
+
+CONTENT — ORDERED CLICKLIST:
+    1. Open /train — pick tactical (or defensive) → short session length small.
+    2. Solve one puzzle visibly — Submit move.
+    3. Point at grade block + Coach section — cite source (Network tab snippet if
+       projector lagging pre-open second window).
+    4. (Optional flash) terminals evaluate.py ONE scroll if judges love numbers.
+
+BOTTOM STRIP REMINDER:
+    Loom/full recording link • GitHub pinned • Questions
+
+[IMAGE PLACEHOLDER]
+    OPTIONAL: Storyboard thumbnails of steps 1–4 from slide 09 series
+    Filename: slides/13-demo-steps.png
+
+
+--------------------------------------------------------------------------------
+SLIDE 14 — THANK YOU / CONTACT
+--------------------------------------------------------------------------------
+TITLE:
+    Questions?
+
+CONTENT:
+    • Repo: [PASTE GITHUB LINK]
+    • Video walkthrough: [ADD LOOM/PANOPTO/etc. URL]
+    • Email OR portfolio: [YOUR CONTACT]
+
+
+================================================================================
+USAGE TIPS WHEN YOU BUILD THE REAL DECK (PowerPoint / Google Slides / Keynote)
+================================================================================
+• One idea per slide; keep body text ≤ 5 bullets × ~8 words unless architecture.
+• Fonts: sans-serif ≥ 28 pt title, ≥ 20 pt body for classroom projection.
+• Slides 5, 9, 10 are your VISUAL PAYOFF slides — linger there.
+• Duplicate slide 9 if you separate “before submit” vs “after submit” for clarity.
+
+================================================================================
+END OF OUTLINE FILE
+================================================================================
